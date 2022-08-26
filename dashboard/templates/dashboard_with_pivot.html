@@ -1,15 +1,42 @@
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>Dashboard with Flexmonster</title>
     <script src="https://cdn.flexmonster.com/flexmonster.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <link rel="stylesheet" href="https://cdn.flexmonster.com/demo.css">
-  </head>
-  <body>
-  <div id="pivot-table-container" data-url="{% url 'pivot_data' %}"></div>
-  <div id="pivot-chart-container"></div>
-  <script>
-    function processData(dataset) {
+    <style>
+/* Charts Style  */
+
+.fm-charts-color-1 {
+  fill: #ffa600 !important;
+}
+
+.fm-charts-color-2 {
+  fill: #7eae26 !important;
+}
+
+.fm-charts-color-3 {
+  fill: #00a45a !important;
+}
+
+.fm-charts-color-4 {
+  fill: #df3800 !important;
+}
+
+.fm-charts-color-5 {
+  fill: #e95800 !important;
+}
+
+.fm-charts-color-6 {
+  fill: #ffa600 !important;
+}</style>
+</head>
+<body>
+<div id="pivot-table-container" data-url="{% url 'pivot_data' %}"></div>
+<div id="pivot-chart-container"></div>
+<script>
+function processData(dataset) {
     var result = []
     dataset = JSON.parse(dataset);
     dataset.forEach(item => result.push(item.fields));
@@ -28,9 +55,45 @@ $.ajax({
             report: {
                 dataSource: {
                     type: "json",
-                    data: processData(data)
+                    data: processData(data),
+                    mapping: {
+                        "product_category": {
+                            "caption": "Product Category"
+                        },
+                        "payment_method": {
+                            "caption": "Payment Method"
+                        },
+                        "shipping_cost": {
+                            "caption": "Shipping Cost",
+                            "type": "number"
+                        },
+                        "unit_price": {
+                            "caption": "Unit Price",
+                            "type": "number"
+                        }
+                    }
                 },
-                slice: {}
+                "slice": {
+                    "rows": [{
+                        "uniqueName": "product_category"
+                    }],
+                    "columns": [{
+                            "uniqueName": "payment_method"
+                        },
+                        {
+                            "uniqueName": "[Measures]"
+                        }
+                    ],
+                    "measures": [{
+                            "uniqueName": "shipping_cost",
+                            "aggregation": "sum"
+                        },
+                        {
+                            "uniqueName": "unit_price",
+                            "aggregation": "sum"
+                        }
+                    ]
+                }
             }
         });
         new Flexmonster({
@@ -42,9 +105,37 @@ $.ajax({
             report: {
                 dataSource: {
                     type: "json",
-                    data: processData(data)
+                    data: processData(data),
+                    mapping: {
+                        "product_category": {
+                            "caption": "Product Category"
+                        },
+                        "payment_method": {
+                            "caption": "Payment Method"
+                        },
+                        "shipping_cost": {
+                            "caption": "Shipping Cost",
+                            "type": "number"
+                        },
+                        "unit_price": {
+                            "caption": "Unit Price",
+                            "type": "number"
+                        }
+                    }
                 },
-                slice: {},
+                "slice": {
+                    "rows": [{
+                        "uniqueName": "product_category"
+                    }],
+                    "columns": [{
+                        "uniqueName": "[Measures]"
+                    }],
+                    "measures": [{
+                        "uniqueName": "Price",
+                        "formula": "sum(\"shipping_cost\") + sum(\"unit_price\")",
+                        "caption": "Price"
+                    }]
+                },
                 "options": {
                     "viewType": "charts",
                     "chart": {
@@ -56,5 +147,7 @@ $.ajax({
     }
 });
 
-  </script>
-  </body>
+
+</script>
+</body>
+</html>
